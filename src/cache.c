@@ -90,6 +90,7 @@ struct show_cache_ctx {
 enum vary_header_bit {
 	VARY_ACCEPT_ENCODING = (1 << 0),
 	VARY_REFERER =         (1 << 1),
+	VARY_ORIGIN =          (1 << 2),
 	VARY_LAST  /* should always be last */
 };
 
@@ -140,6 +141,7 @@ static int accept_encoding_bitmap_cmp(const void *ref, const void *new, unsigned
 const struct vary_hashing_information vary_information[] = {
 	{ IST("accept-encoding"), VARY_ACCEPT_ENCODING, sizeof(uint32_t), &accept_encoding_normalizer, &accept_encoding_bitmap_cmp },
 	{ IST("referer"), VARY_REFERER, sizeof(int), &default_normalizer, NULL },
+	{ IST("origin"), VARY_ORIGIN, sizeof(int), &default_normalizer, NULL },
 };
 
 
@@ -2367,7 +2369,7 @@ static int accept_encoding_normalizer(struct htx *htx, struct ist hdr_name,
 #undef ACCEPT_ENCODING_MAX_ENTRIES
 
 /*
- * Normalizer used by default for the Referer header. It only
+ * Normalizer used by default for the Referer and Origin header. It only
  * calculates a simple crc of the whole value.
  * Only the first occurrence of the header will be taken into account in the
  * hash.
